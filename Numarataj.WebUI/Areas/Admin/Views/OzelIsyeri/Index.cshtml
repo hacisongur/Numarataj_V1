@@ -1,0 +1,190 @@
+﻿@model List<ResultOzelIsyeriDto>
+
+@{
+    ViewData["Title"] = "ÖZEL İŞ YERİ SAYFASI";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .btn-outline-danger {
+        background-color: #d9534f;
+        color: white;
+    }
+
+    .btn-outline-info {
+        background-color: #5bc0de;
+        color: white;
+    }
+
+    .btn-outline-primary {
+        background-color: #0275d8;
+        color: white;
+    }
+
+    .btn-outline-success {
+        background-color: #5cb85c;
+        color: white;
+    }
+
+    /* Hover effect for the entire row, including B.No column */
+    #ozelIsyeriTable tbody tr:hover > td {
+        background-color: #91c6ff !important; /* Açık mavi */
+    }
+
+    /* Container width and margin adjustments */
+    .container {
+        max-width: 100%; /* Full width */
+        margin: 0; /* No margin */
+        padding: 0; /* No padding */
+    }
+
+    /* DataTable styling adjustments */
+    table.dataTable {
+        margin: 0; /* Remove margin */
+    }
+
+    .btn-group .btn {
+        margin-right: 5px; /* Space between buttons */
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 5px; /* Adds consistent space between buttons */
+    }
+
+    /* Success alert styling */
+    .alert-container {
+        margin-top: 10px;
+    }
+
+    .top-button-container {
+        display: flex;
+        position: relative; /* Konumlandırmayı göreli yapar */
+        justify-content: flex-end;
+        margin-bottom: 10px;
+    }
+
+        .top-button-container a {
+            position: absolute;
+            top: 5px; /* Butonu aşağı kaydırır */
+            right: 0;
+            z-index: 10; /* Butonu öne getirir */
+        }
+</style>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="successMessage" class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="container mt-2">
+    <div class="top-button-container">
+        <a asp-action="CreateOzelIsyeri" asp-controller="OzelIsyeri" asp-area="Admin" class="btn btn-outline-primary">Özel İş Yeri Ekle</a>
+    </div>
+    <table id="ozelIsyeriTable" class="display table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>B.No</th>
+                <th>TC</th>
+                <th>Ad/Soyad</th>
+                <th>Tarih</th>
+                <th>Tel</th>
+                <th>Mahalle</th>
+                <th>Sokak</th>
+                <th>D.Kapı</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.BelgeNoId</td>
+                    <td class="tc-kimlik">
+                        <span class="tc-value">@item.TcKimlikNo</span>
+                        <input type="checkbox" class="hide-tc-checkbox" />
+                    </td>
+                    <td>@item.AdSoyad</td>
+                    <td>@item.Tarih</td>
+                    <td>@item.Telefon</td>
+                    <td>@item.Mahalle</td>
+                    <td>@item.CaddeSokak</td>
+                    <td>@item.DisKapi</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#deleteModal-@item.BelgeNoId">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            <a asp-area="Admin" asp-controller="OzelIsyeri" asp-action="UpdateOzelIsyeri" asp-route-belgeNoId="@item.BelgeNoId" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="@Url.Action("GeneratePdf", "Pdf", new { area = "Admin", id = item.BelgeNoId, title = "ÖZEL İŞYERİ", pdfName = "ÖzelİşyeriRaporu.pdf", type = 2 })"
+                               class="btn btn-sm btn-outline-info generate-pdf-button"
+                               data-id="@item.BelgeNoId">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </a>
+                        </div>
+
+                        <!-- Modal Structure for Delete Confirmation -->
+                        <div class="modal fade" id="deleteModal-@item.BelgeNoId" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel-@item.BelgeNoId" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title" id="deleteModalLabel-@item.BelgeNoId">Silme Onayı</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bu kaydı silmek istediğinize emin misiniz?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                                        <form asp-action="DeleteOzelIsyeri" asp-controller="OzelIsyeri" asp-area="Admin" asp-route-id="@item.BelgeNoId" method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-danger">Sil</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function toggleTcVisibility(checkbox) {
+        var tcValue = checkbox.closest('td').querySelector('.tc-value');
+        if (checkbox.checked) {
+            tcValue.style.display = 'none';
+        } else {
+            tcValue.style.display = 'inline';
+        }
+    }
+
+    document.querySelectorAll('.hide-tc-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            toggleTcVisibility(this);
+
+            const row = this.closest('tr');
+            const pdfButton = row.querySelector('.generate-pdf-button');
+            const id = pdfButton.getAttribute('data-id');
+            const isTcHidden = this.checked;
+
+            // Yeni URL'yi isTcHidden parametresi ile oluştur
+            pdfButton.href = `@Url.Action("GeneratePdf", "Pdf", new { area = "Admin" })?id=${id}&title=ÖZEL İŞYERİ&pdfName=ÖzelİşyeriRaporu.pdf&type=2&isTcHidden=${isTcHidden}`;
+        });
+    });
+
+    setTimeout(function () {
+        var successMessage = document.getElementById("successMessage");
+        if (successMessage) {
+            successMessage.style.display = "none";
+        }
+    }, 2000);
+</script>

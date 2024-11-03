@@ -1,0 +1,162 @@
+﻿
+@model UpdateAdresTespitDto
+@{
+    ViewData["Title"] = "Adres Tespit Güncelleme Sayfası";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<style>
+    .custom-form-container {
+        background-color: #e6e0f8; /* Açık mor renk */
+        padding: 20px; /* Formun çevresine dolgu */
+        border-radius: 8px; /* Kenarları yuvarlatmak için */
+    }
+</style>
+
+<form id="adresForm" method="post" asp-area="Admin" asp-controller="AdresTespit"  asp-action="UpdateAdresTespit" class="custom-form-container">
+    <input type="hidden" name="BelgeNoId" value="@Model.BelgeNoId" />
+    @Html.AntiForgeryToken()
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td>
+                    <label for="TcKimlikNo" class="form-label">TC Kimlik No</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="TcKimlikNo" name="TcKimlikNo" placeholder="TC" maxlength="11" value="@Model.TcKimlikNo" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);">
+                    </div>
+                </td>
+                <td>
+                    <label for="AdSoyad" class="form-label">Adı Soyadı</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="AdSoyad" name="AdSoyad" placeholder="Adı Soyadı" value="@Model.AdSoyad">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Telefon" class="form-label">Telefon</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="Telefon" name="Telefon" placeholder="0(___) ___ __ __" value="@Model.Telefon" oninput="formatPhoneNumber(this)" maxlength="15">
+                    </div>
+                </td>
+                <td>
+                    <label for="inputMahalle" class="form-label">Mahalle</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                        </div>
+                        @Html.DropDownListFor(model => model.Mahalle, (IEnumerable<SelectListItem>)ViewBag.MahalleListesi, "Mahalle Seçiniz...", new { @class = "form-control", id = "inputMahalle" })
+                    </div>
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    <label for="CaddeSokak" class="form-label">Cadde/Sokak</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-road"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="CaddeSokak" name="CaddeSokak" placeholder="Cadde/Sokak" value="@Model.CaddeSokak">
+                    </div>
+                </td>
+                <td>
+                    <label for="DisKapi" class="form-label">Dış Kapı No</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-door-open"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="DisKapi" name="DisKapi" placeholder="Dış Kapı No" maxlength="10" value="@Model.DisKapi">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="İcKapiNo" class="form-label">İç Kapı No</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-door-closed"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="İcKapiNo" name="İcKapiNo" placeholder="İç Kapı No" maxlength="10" value="@Model.İcKapiNo">
+                    </div>
+                </td>
+                <td>
+                    <label for="SiteAdi" class="form-label">Site Adı/Blok</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-road"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="SiteAdi" name="SiteAdi" placeholder="Site Adı/Blok" value="@Model.SiteAdi">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="EskiAdres" class="form-label">Eski Adres</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-map-signs"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="EskiAdres" name="EskiAdres" placeholder="Eski Adres" value="@Model.EskiAdres">
+                    </div>
+                </td>
+                <td>
+                    <label for="AdresNo" class="form-label">Adres No (UAVT)</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="AdresNo" name="AdresNo" placeholder="Adres No (UAVT)" value="@Model.AdresNo">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Ada" class="form-label">Ada</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-map"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="Ada" name="Ada" placeholder="Ada" value="@Model.Ada">
+                    </div>
+                </td>
+                <td>
+                    <label for="Parsel" class="form-label">Parsel</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-map"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="Parsel" name="Parsel" placeholder="Parsel" value="@Model.Parsel">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="text-center">
+                    <button type="submit" class="btn btn-primary">Güncelle</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="form-group col-md-4">
+        <input type="hidden" id="Tarih" name="Tarih" value="@Model.Tarih" />
+    </div>
+</form>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const today = new Date();
+        const formattedDate = today.toISOString().substring(0, 16);
+        document.getElementById('Tarih').value = formattedDate;
+    });
+</script>

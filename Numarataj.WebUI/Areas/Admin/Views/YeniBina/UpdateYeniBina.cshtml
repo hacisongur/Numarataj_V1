@@ -1,0 +1,127 @@
+﻿@model UpdateYeniBinaDto
+
+@{
+    ViewData["Title"] = "Yeni Bina Güncelleme Sayfası";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<style>
+    .custom-form-container {
+        background-color: #e6e0f8; /* Açık mor renk */
+        padding: 20px; /* Formun çevresine dolgu */
+        border-radius: 8px; /* Kenarları yuvarlatmak için */
+        max-width: 1000px; /* Daha geniş bir maksimum genişlik */
+        width: 90%; /* Tam ekran genişliğinin %90'ı */
+        margin: auto;
+    }
+</style>
+
+<form id="yeniBinaForm" method="post" asp-area="Admin" asp-controller="YeniBina" asp-action="UpdateYeniBina" class="custom-form-container">
+    <input type="hidden" name="BelgeNoId" value="@Model.BelgeNoId" />
+    @Html.AntiForgeryToken()
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td>
+                    <label for="TcKimlikNo" class="form-label">TC Kimlik No</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="TcKimlikNo" name="TcKimlikNo" placeholder="TC Kimlik No" maxlength="11" value="@Model.TcKimlikNo">
+                    </div>
+                </td>
+                <td>
+                    <label for="AdSoyad" class="form-label">Adı Soyadı</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="AdSoyad" name="AdSoyad" placeholder="Adı Soyadı" value="@Model.AdSoyad">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Telefon" class="form-label">Telefon</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="Telefon" name="Telefon" placeholder="Telefon" value="@Model.Telefon">
+                    </div>
+                </td>
+                <td>
+                    <label for="inputMahalle" class="form-label">Mahalle</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                        </div>
+                        @Html.DropDownListFor(model => model.Mahalle,
+                                 (IEnumerable<SelectListItem>)ViewBag.MahalleListesi,
+                                 "Mahalle Seçiniz...",
+                                 new { @class = "form-control", id = "inputMahalle" })
+                    </div>
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    <label for="CaddeSokak" class="form-label">Cadde/Sokak</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-road"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="CaddeSokak" name="CaddeSokak" placeholder="Cadde/Sokak" value="@Model.CaddeSokak">
+                    </div>
+                </td>
+                <td>
+                    <label for="DisKapi" class="form-label">Dış Kapı</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-door-open"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="DisKapi" name="DisKapi" placeholder="Dış Kapı" value="@Model.DisKapi">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="Ada" class="form-label">Ada</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-map"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="Ada" name="Ada" placeholder="Ada" value="@Model.Ada">
+                    </div>
+                </td>
+                <td>
+                    <label for="Parsel" class="form-label">Parsel</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-map"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="Parsel" name="Parsel" placeholder="Parsel" value="@Model.Parsel">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="text-center">
+                    <input type="hidden" id="Tarih" name="Tarih" value="@Model.Tarih" />
+                    <button type="submit" class="btn btn-primary">Güncelle</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tarihField = document.getElementById('Tarih');
+        tarihField.value = new Date().toISOString().substring(0, 16);
+    });
+</script>
